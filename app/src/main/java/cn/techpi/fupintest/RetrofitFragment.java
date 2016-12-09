@@ -60,7 +60,7 @@ public class RetrofitFragment extends Fragment {
     @OnClick(R.id.click_me_BN)
     public void onClick() {
         Toast.makeText(this.getContext(),"You clicked Button",Toast.LENGTH_LONG).show();
-        MovieUtils.getMovies(new Callback<MovieEntity>() {
+        MovieUtils.getMovies(0,20,new Callback<MovieEntity>() {
             @Override
             public void onResponse(Response<MovieEntity> response, Retrofit retrofit) {
                 textView.setText(response.body().toString());

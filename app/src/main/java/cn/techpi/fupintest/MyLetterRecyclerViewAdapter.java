@@ -49,13 +49,16 @@ public class MyLetterRecyclerViewAdapter extends RecyclerView.Adapter<MyLetterRe
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         Movie m=holder.mItem = mValues.get(position);
-        holder.mIdView.setText(m.getTitle()+"（"+m.getYear()+"）");
+        holder.mIdView.setText((position+1)+". "+m.getTitle()+"（"+m.getYear()+"）");
         holder.mContentView.setText("类型："+formatType(m.getGenres()));
-        holder.mRatingView.setText("评分："+m.getRating().getAverage());
-        holder.mStars.setRating(Float.valueOf(m.getRating().getStars())/10);
+        if(m.getRating()!=null) {
+            holder.mRatingView.setText("评分："+m.getRating().getAverage());
+            holder.mStars.setRating(Float.valueOf(m.getRating().getStars())/10);
+        }
+
         holder.mDirectorView.setText("导演："+formatDirector(m.getDirectors()));
         holder.mCastsView.setText("主演："+formatDirector(m.getCasts()));
-        Picasso.with(this.mContext).load(m.getImages().getLarge()).into(holder.mImage);
+        if(m.getImages()!=null)Picasso.with(this.mContext).load(m.getImages().getLarge()).into(holder.mImage);
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,6 +72,7 @@ public class MyLetterRecyclerViewAdapter extends RecyclerView.Adapter<MyLetterRe
     }
 
     private String formatDirector(List<Movie.Director> directors) {
+        if(directors==null) return "";
         StringBuffer sb=new StringBuffer("");
 
         for(int i=0;i<directors.size();i++){
@@ -80,6 +84,7 @@ public class MyLetterRecyclerViewAdapter extends RecyclerView.Adapter<MyLetterRe
     }
 
     private String formatType(String[] genres) {
+        if(genres==null) return "";
         StringBuffer sb=new StringBuffer("");
 
         for(int i=0;i<genres.length;i++){

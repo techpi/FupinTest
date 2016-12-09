@@ -10,7 +10,7 @@ import retrofit.Retrofit;
  */
 
 public class MovieUtils {
-    public static void getMovies(Callback<MovieEntity> callback) {
+    public static void getMovies(int start,int count,Callback<MovieEntity> callback) {
         String baseUrl = "https://api.douban.com/v2/movie/";
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -19,7 +19,7 @@ public class MovieUtils {
                 .build();
 
         MovieService movieService = retrofit.create(MovieService.class);
-        Call<MovieEntity> call = movieService.getTopMovie(0, 10);
+        Call<MovieEntity> call = movieService.getTopMovie(start, count);
         call.enqueue(callback);
     }
 }

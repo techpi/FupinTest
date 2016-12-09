@@ -3,6 +3,7 @@ package cn.techpi.fupintest;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,7 +34,8 @@ public class LetterFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
-
+    private int currentPage=0;
+    private int totalPage=1;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -63,34 +65,60 @@ public class LetterFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_letter_list, container, false);
-
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+        final SwipeRefreshLayout refreshview = (SwipeRefreshLayout) inflater.inflate(R.layout.fragment_letter_list, container, false);
+        final RecyclerView recyclerView = (RecyclerView) refreshview.findViewById(R.id.list);
+        final MyLetterRecyclerViewAdapter adapter= new MyLetterRecyclerViewAdapter(new ArrayList<Movie>(), mListener,getContext());
+        recyclerView.setAdapter(adapter);
+        Context context = refreshview.getContext();
+        if (mColumnCount <= 1) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        } else {
+            recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+        }
+        refreshview.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Movie movie=new Movie();
+                movie.setTitle("下拉加载");
+                adapter.getmValues().add(0,movie);
+                adapter.notifyDataSetChanged();
+                ((SwipeRefreshLayout) refreshview).setRefreshing(false);
             }
-            final MyLetterRecyclerViewAdapter adapter= new MyLetterRecyclerViewAdapter(new ArrayList<Movie>(), mListener,getContext());
-            recyclerView.setAdapter(adapter);
-            MovieUtils.getMovies(new Callback<MovieEntity>() {
-                @Override
-                public void onResponse(Response<MovieEntity> response, Retrofit retrofit) {
-                    adapter.setmValues(response.body().getSubjects());
+        });
+
+        recyclerView.addOnScrollListener(new EndLessOnScrollListener((LinearLayoutManager) recyclerView.getLayoutManager()) {
+            @Override
+            public void onLoadMore(int currentPage) {
+                if(currentPage<totalPage) {
+                    loadPage(adapter);
                     adapter.notifyDataSetChanged();
                 }
+                else
+                    Toast.makeText(getContext(),"已经没有了！",Toast.LENGTH_SHORT).show();
+                ((SwipeRefreshLayout) refreshview).setRefreshing(false);
+            }
+        });
+        loadPage(adapter);
 
-                @Override
-                public void onFailure(Throwable t) {
-                    Toast.makeText(getContext(),"加载失败！",Toast.LENGTH_SHORT).show();
-                }
+        return refreshview;
+    }
 
-            });
-        }
-        return view;
+    private void loadPage(final MyLetterRecyclerViewAdapter adapter) {
+        MovieUtils.getMovies(currentPage*20,20,new Callback<MovieEntity>() {
+            @Override
+            public void onResponse(Response<MovieEntity> response, Retrofit retrofit) {
+                totalPage=response.body().getTotal()/20+1;
+                adapter.getmValues().addAll(response.body().getSubjects());
+                adapter.notifyDataSetChanged();
+                currentPage++;
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Toast.makeText(getContext(),"加载失败！",Toast.LENGTH_SHORT).show();
+            }
+
+        });
     }
 
 
