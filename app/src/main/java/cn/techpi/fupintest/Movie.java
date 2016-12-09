@@ -61,6 +61,48 @@ public class Movie {
     }
 
     private MovieRating rating;
+
+    public String[] getGenres() {
+        return genres;
+    }
+
+    public void setGenres(String[] genres) {
+        this.genres = genres;
+    }
+
+    private String[] genres;
+    private List<Director> directors;
+
+    public List<Director> getDirectors() {
+        return directors;
+    }
+
+    public void setDirectors(List<Director> directors) {
+        this.directors = directors;
+    }
+
+    public List<Director> getCasts() {
+        return casts;
+    }
+
+    public void setCasts(List<Director> casts) {
+        this.casts = casts;
+    }
+
+    private List<Director> casts;
+
+    public static class Director{
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        private String name;
+    }
+
     public static class MovieRating{
         public double getMax() {
             return max;
