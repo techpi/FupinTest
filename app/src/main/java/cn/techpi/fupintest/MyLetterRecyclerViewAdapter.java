@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -47,11 +48,14 @@ public class MyLetterRecyclerViewAdapter extends RecyclerView.Adapter<MyLetterRe
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).getTitle());
-        holder.mContentView.setText("上映年份："+mValues.get(position).getYear());
-        holder.mRatingView.setText("评分："+mValues.get(position).getRating().getAverage());
-        Picasso.with(this.mContext).load(mValues.get(position).getImages().getLarge()).into(holder.mImage);
+        Movie m=holder.mItem = mValues.get(position);
+        holder.mIdView.setText(m.getTitle()+"（"+m.getYear()+"）");
+        holder.mContentView.setText("类型："+formatType(m.getGenres()));
+        holder.mRatingView.setText("评分："+m.getRating().getAverage());
+        holder.mStars.setRating(Float.valueOf(m.getRating().getStars())/10);
+        holder.mDirectorView.setText("导演："+formatDirector(m.getDirectors()));
+        holder.mCastsView.setText("主演："+formatDirector(m.getCasts()));
+        Picasso.with(this.mContext).load(m.getImages().getLarge()).into(holder.mImage);
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,6 +68,28 @@ public class MyLetterRecyclerViewAdapter extends RecyclerView.Adapter<MyLetterRe
         });
     }
 
+    private String formatDirector(List<Movie.Director> directors) {
+        StringBuffer sb=new StringBuffer("");
+
+        for(int i=0;i<directors.size();i++){
+            if(i!=0)sb.append(",");
+            sb.append(directors.get(i).getName());
+
+        }
+        return sb.toString();
+    }
+
+    private String formatType(String[] genres) {
+        StringBuffer sb=new StringBuffer("");
+
+        for(int i=0;i<genres.length;i++){
+            if(i!=0)sb.append(",");
+            sb.append(genres[i]);
+
+        }
+        return sb.toString();
+    }
+
     @Override
     public int getItemCount() {
         return mValues.size();
@@ -74,7 +100,10 @@ public class MyLetterRecyclerViewAdapter extends RecyclerView.Adapter<MyLetterRe
         public final TextView mIdView;
         public final TextView mContentView;
         public final TextView mRatingView;
+        public final TextView mDirectorView;
+        public final TextView mCastsView;
         public final ImageView mImage;
+        public final RatingBar mStars;
         public Movie mItem;
 
         public ViewHolder(View view) {
@@ -84,6 +113,9 @@ public class MyLetterRecyclerViewAdapter extends RecyclerView.Adapter<MyLetterRe
             mContentView = (TextView) view.findViewById(R.id.content);
             mImage=(ImageView)view.findViewById(R.id.image);
             mRatingView=(TextView)view.findViewById(R.id.rating);
+            mStars=(RatingBar)view.findViewById(R.id.stars);
+            mDirectorView=(TextView)view.findViewById(R.id.director);
+            mCastsView=(TextView)view.findViewById(R.id.casts);
         }
 
         @Override

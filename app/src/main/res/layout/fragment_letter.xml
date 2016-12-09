@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:layout_marginTop="10dp"
@@ -8,8 +8,8 @@
     <ImageView
         android:id="@+id/image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="10"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
         />
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,21 +18,54 @@
         android:orientation="vertical">
         <TextView
             android:id="@+id/title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/text_margin"
             android:textAppearance="?attr/textAppearanceListItem" />
-        <TextView
-            android:id="@+id/rating"
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
-            android:textAppearance="?attr/textAppearanceListItem" />
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/text_margin"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:layout_weight="2"/>
+            <RatingBar
+                android:id="@+id/stars"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:isIndicator="true"
+                android:layout_margin="@dimen/text_margin"
+                style="?android:attr/ratingBarStyleSmall"
+                android:clickable="false"
+                android:layout_weight="1"
+                />
+
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/content"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/text_margin"
+            android:textAppearance="?attr/textAppearanceListItem" />
+        <TextView
+            android:id="@+id/director"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/text_margin"
+            android:maxLines="1"
+            android:textAppearance="?attr/textAppearanceListItem" />
+        <TextView
+            android:id="@+id/casts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/text_margin"
+            android:maxLines="1"
             android:textAppearance="?attr/textAppearanceListItem" />
     </LinearLayout>
 
