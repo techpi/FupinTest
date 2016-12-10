@@ -98,6 +98,7 @@ public class LetterFragment extends Fragment {
                 ((SwipeRefreshLayout) refreshview).setRefreshing(false);
             }
         });
+        recyclerView.addItemDecoration(new DividerDecoration(getContext(),DividerDecoration.VERTICAL_LIST));
         loadPage(adapter);
 
         return refreshview;
