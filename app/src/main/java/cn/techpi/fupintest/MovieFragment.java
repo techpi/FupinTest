@@ -12,14 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import cn.techpi.fupintest.dummy.DummyContent;
-import cn.techpi.fupintest.dummy.DummyContent.DummyItem;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -27,28 +24,26 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class LetterFragment extends Fragment {
+public class MovieFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
-
     private int currentPage=0;
     private int totalPage=1;
-
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public LetterFragment() {
+    public MovieFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static LetterFragment newInstance(int columnCount) {
-        LetterFragment fragment = new LetterFragment();
+    public static MovieFragment newInstance(int columnCount) {
+        MovieFragment fragment = new MovieFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -67,9 +62,9 @@ public class LetterFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final SwipeRefreshLayout refreshview = (SwipeRefreshLayout) inflater.inflate(R.layout.fragment_letter_list, container, false);
-        final RecyclerView recyclerView = (RecyclerView) refreshview.findViewById(R.id.listLetter);
-        final MyLetterRecyclerViewAdapter adapter= new MyLetterRecyclerViewAdapter(new ArrayList<Letter>());
+        final SwipeRefreshLayout refreshview = (SwipeRefreshLayout) inflater.inflate(R.layout.fragment_movie_list, container, false);
+        final RecyclerView recyclerView = (RecyclerView) refreshview.findViewById(R.id.list);
+        final MyMovieRecyclerViewAdapter adapter= new MyMovieRecyclerViewAdapter(new ArrayList<Movie>(), mListener,getContext());
         recyclerView.setAdapter(adapter);
         Context context = refreshview.getContext();
         if (mColumnCount <= 1) {
@@ -80,24 +75,38 @@ public class LetterFragment extends Fragment {
         refreshview.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Letter letter=new Letter();
-                letter.setTitle("下拉加载");
-                adapter.getmValues().add(0,letter);
+                Movie movie=new Movie();
+                movie.setTitle("下拉加载");
+                adapter.getmValues().add(0,movie);
                 adapter.notifyDataSetChanged();
+                ((SwipeRefreshLayout) refreshview).setRefreshing(false);
+            }
+        });
+
+        recyclerView.addOnScrollListener(new EndLessOnScrollListener((LinearLayoutManager) recyclerView.getLayoutManager()) {
+            @Override
+            public void onLoadMore(int currentPage) {
+                if(currentPage<totalPage) {
+                    loadPage(adapter);
+                    adapter.notifyDataSetChanged();
+                }
+                else
+                    Toast.makeText(getContext(),"已经没有了！",Toast.LENGTH_SHORT).show();
                 ((SwipeRefreshLayout) refreshview).setRefreshing(false);
             }
         });
         recyclerView.addItemDecoration(new DividerDecoration(getContext(),DividerDecoration.VERTICAL_LIST));
         loadPage(adapter);
+
         return refreshview;
     }
 
-    private void loadPage(final MyLetterRecyclerViewAdapter adapter) {
-        LetterUtils.getAllLetters(currentPage*20,20,new Callback<List<Letter>>() {
+    private void loadPage(final MyMovieRecyclerViewAdapter adapter) {
+        MovieUtils.getMovies(currentPage*20,20,new Callback<MovieEntity>() {
             @Override
-            public void onResponse(Response<List<Letter>> response, Retrofit retrofit) {
-                totalPage=response.body().size()/20+1;
-                adapter.getmValues().addAll(response.body());
+            public void onResponse(Response<MovieEntity> response, Retrofit retrofit) {
+                totalPage=response.body().getTotal()/20+1;
+                adapter.getmValues().addAll(response.body().getSubjects());
                 adapter.notifyDataSetChanged();
                 currentPage++;
             }
@@ -110,14 +119,22 @@ public class LetterFragment extends Fragment {
         });
     }
 
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        if (context instanceof OnListFragmentInteractionListener) {
+            mListener = (OnListFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnListFragmentInteractionListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        mListener = null;
     }
 
     /**
@@ -132,6 +149,6 @@ public class LetterFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(Movie item);
     }
 }

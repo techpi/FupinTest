@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">测试应用</string>
+    <string name="app_name">主任信箱</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -8,5 +8,5 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="navigation_drawer_menuitem_movie" >豆瓣电影250</string>
+    <string name="navigation_drawer_menuitem_letter" >主任信箱</string>
 </resources>

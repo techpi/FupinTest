@@ -14,17 +14,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import cn.techpi.fupintest.dummy.DummyContent;
-
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,LetterFragment.OnListFragmentInteractionListener {
-
+        implements NavigationView.OnNavigationItemSelectedListener,MovieFragment.OnListFragmentInteractionListener {
+    private LetterFragment letterFragment;
+    private MovieFragment movieFragment;
+    private RetrofitFragment retrofitFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        getSupportFragmentManager().beginTransaction().replace(R.id.main_container,LetterFragment.newInstance(1)).commit();
+        letterFragment=LetterFragment.newInstance(1);
+        retrofitFragment=RetrofitFragment.newInstance();
+        movieFragment=MovieFragment.newInstance(1);
+        getSupportFragmentManager().beginTransaction().replace(R.id.main_container,letterFragment ).commit();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -80,7 +82,7 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private int currentMenuItemId=R.id.nav_camera;
+    private int currentMenuItemId=R.id.nav_letter;
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -89,13 +91,14 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         if(id!=currentMenuItemId) {
             currentMenuItemId=id;
-            if (id == R.id.nav_camera) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.main_container,LetterFragment.newInstance(1)).commit();
+            if (id == R.id.nav_letter) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_container,letterFragment).commit();
+
 
             } else if (id == R.id.nav_gallery) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.main_container,RetrofitFragment.newInstance()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_container,retrofitFragment).commit();
             } else if (id == R.id.nav_slideshow) {
-
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_container,movieFragment).commit();
             } else if (id == R.id.nav_manage) {
 
             } else if (id == R.id.nav_share) {
