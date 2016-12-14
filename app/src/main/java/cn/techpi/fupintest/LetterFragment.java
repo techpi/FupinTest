@@ -96,6 +96,10 @@ public class LetterFragment extends Fragment {
         LetterUtils.getAllLetters(currentPage*20,20,new Callback<List<Letter>>() {
             @Override
             public void onResponse(Response<List<Letter>> response, Retrofit retrofit) {
+                if(response.body()==null) {
+                    Toast.makeText(getContext(),"加载失败！",Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 totalPage=response.body().size()/20+1;
                 adapter.getmValues().addAll(response.body());
                 adapter.notifyDataSetChanged();
