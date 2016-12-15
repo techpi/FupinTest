@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity
     private LetterFragment letterFragment;
     private MovieFragment movieFragment;
     private RetrofitFragment retrofitFragment;
+    private MessageFragment messageFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity
         letterFragment=LetterFragment.newInstance(1);
         retrofitFragment=RetrofitFragment.newInstance();
         movieFragment=MovieFragment.newInstance(1);
+        messageFragment=MessageFragment.newInstance(1);
         getSupportFragmentManager().beginTransaction().replace(R.id.main_container,letterFragment ).commit();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -106,7 +108,7 @@ public class MainActivity extends AppCompatActivity
             } else if (id == R.id.nav_share) {
 
             } else if (id == R.id.nav_send) {
-
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_container,messageFragment).commit();
             }
             setTitle(item.getTitle());
         }
